@@ -8,23 +8,28 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <script>
-        // Polyfill for process.env that doesn't wipe existing keys
-        window.process = window.process || {};
-        window.process.env = window.process.env || {};
+        // Polyfill for process.env that respects pre-injected variables
+        if (typeof window !== 'undefined') {
+            window.process = window.process || {};
+            window.process.env = window.process.env || {};
+        }
         
         // Global error handler for debugging
         window.onerror = function(message, source, lineno, colno, error) {
             console.error("Global crash detected:", message, error);
-            setTimeout(() => {
-                const root = document.getElementById('root');
-                if (root && root.innerHTML === "") {
-                    root.innerHTML = `<div style="color: white; padding: 40px; font-family: 'Orbitron', sans-serif; text-align: center;">
-                        <h1 style="color: #06b6d4; margin-bottom: 20px;">SYSTEM LINK FAILURE</h1>
-                        <p style="color: #888;">${message}</p>
-                        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #06b6d4; color: black; border: none; cursor: pointer;">REBOOT SYSTEM</button>
-                    </div>`;
-                }
-            }, 1000);
+            // Only show full crash screen for critical execution errors
+            if (message.includes("is not defined") || message.includes("syntax error")) {
+                setTimeout(() => {
+                    const root = document.getElementById('root');
+                    if (root && root.innerHTML === "") {
+                        root.innerHTML = `<div style="color: white; padding: 40px; font-family: 'Orbitron', sans-serif; text-align: center;">
+                            <h1 style="color: #06b6d4; margin-bottom: 20px;">SYSTEM LINK FAILURE</h1>
+                            <p style="color: #888;">${message}</p>
+                            <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #06b6d4; color: black; border: none; cursor: pointer;">REBOOT SYSTEM</button>
+                        </div>`;
+                    }
+                }, 1000);
+            }
         };
     </script>
     <style>
