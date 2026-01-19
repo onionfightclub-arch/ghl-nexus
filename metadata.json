@@ -1,0 +1,8 @@
+{
+  "name": "NexusGHL - Futuristic Agency Ecosystem",
+  "description": "A high-conversion GoHighLevel affiliate landing page featuring a futuristic aesthetic, interactive AI chatbot, and deep technical showcases of the GHL ecosystem.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
