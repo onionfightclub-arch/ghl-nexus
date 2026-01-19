@@ -1,6 +1,6 @@
 
 import { GoogleGenAI } from "@google/genai";
-import { AFFILIATE_LINK } from "../constants";
+import { AFFILIATE_LINK } from "../constants.ts";
 
 const SYSTEM_INSTRUCTION = `
 You are NexusAI, the futuristic concierge for NexusGHL, a premium GoHighLevel (GHL) affiliate ecosystem.
@@ -14,13 +14,21 @@ Keep responses concise and formatted with markdown.
 `;
 
 export class GeminiService {
-  private ai: GoogleGenAI;
+  private ai: GoogleGenAI | null = null;
 
   constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    // Safely check for API_KEY
+    const apiKey = typeof process !== 'undefined' && process.env ? process.env.API_KEY : '';
+    if (apiKey) {
+      this.ai = new GoogleGenAI({ apiKey });
+    }
   }
 
   async sendMessage(chatHistory: { role: 'user' | 'model', text: string }[], message: string): Promise<string> {
+    if (!this.ai) {
+      return "Neural interface offline. Please configure the system API matrix.";
+    }
+
     try {
       const response = await this.ai.models.generateContent({
         model: 'gemini-2.0-flash',

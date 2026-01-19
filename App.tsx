@@ -1,10 +1,10 @@
 
 import React from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Features from './components/Features';
-import ChatBot from './components/ChatBot';
-import { AFFILIATE_LINK } from './constants';
+import Navbar from './components/Navbar.tsx';
+import Hero from './components/Hero.tsx';
+import Features from './components/Features.tsx';
+import ChatBot from './components/ChatBot.tsx';
+import { AFFILIATE_LINK } from './constants.ts';
 
 const App: React.FC = () => {
   return (
