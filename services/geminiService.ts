@@ -25,19 +25,23 @@ CRITICAL:
 
 export class GeminiService {
   async sendMessage(chatHistory: Message[], message: string): Promise<string> {
-    // Check if key is available to prevent SDK throw
     const apiKey = process.env.API_KEY;
     
+    // Check for missing environment variable on Vercel
     if (!apiKey || apiKey === "undefined" || apiKey === "") {
-      console.warn("NexusAI Warning: No API Key detected in environment.");
-      return "Ah, it seems our long-range communication array is currently offline! (Missing API Key). I'd love to chat, but my neural link needs its power source. Once the tech team plugs it in on the Vercel dashboard, I'll be back to help you conquer the marketing world!";
+      console.warn("NexusAI Warning: API_KEY is missing from environment variables.");
+      return "Ah, it seems our long-range communication array is currently offline! (Missing API Key). My friend, please ensure you've added the 'API_KEY' variable in your Vercel project settings using a valid Google AI Studio key.";
     }
 
-    // Initialize with a fresh instance to ensure environment variables are captured
+    // Check for OpenRouter key type which is common error
+    if (apiKey.startsWith("sk-or-")) {
+      return "Alert! It seems we're using an OpenRouter key instead of a native Google Gemini key. My friend, please swap your 'API_KEY' for a Google AI Studio key (starting with AIza) for my neural links to function correctly!";
+    }
+
     const ai = new GoogleGenAI({ apiKey });
     
     try {
-      // Switched to gemini-2.0-flash as requested for better stability/availability
+      // Using gemini-2.0-flash for high speed and intelligence
       const response = await ai.models.generateContent({
         model: 'gemini-2.0-flash',
         contents: [
@@ -49,22 +53,44 @@ export class GeminiService {
         ],
         config: {
           systemInstruction: SYSTEM_INSTRUCTION,
-          temperature: 0.8,
+          temperature: 0.85,
           topP: 0.95,
           topK: 40,
         },
       });
 
-      return response.text || "Ah, my apologies! My neural link flickered for a second because I was too excited about your agency's potential. Could you repeat that, my friend?";
+      return response.text || "Ah, my apologies! My neural link flickered for a second. Could you repeat that, my friend?";
     } catch (error: any) {
       console.error("NexusAI Critical Error:", error);
       
-      // Handle specific common Vercel/API issues
-      if (error.message?.includes("API key")) {
-        return "It looks like my access key to the mainframe is being rejected! My friend, please ensure the API_KEY is set correctly in your environment variables.";
+      const errorMsg = error.message?.toLowerCase() || "";
+      
+      if (errorMsg.includes("api key") || errorMsg.includes("invalid")) {
+        return "It looks like my access key to the mainframe is being rejected! My friend, please double-check that your API_KEY is a valid Google AI Studio key (starts with AIza).";
       }
-      if (error.message?.includes("location") || error.message?.includes("supported")) {
-        return "My friend, it seems I'm currently restricted in this sector of the galaxy (Region Limitation). Our team is working on expanding my range!";
+      
+      if (errorMsg.includes("location") || errorMsg.includes("region")) {
+        return "My friend, it seems I'm currently restricted in this sector of the galaxy (Region Limitation). Some Gemini models are not available in certain territories like the UK or EU yet. You may need to use a different deployment region on Vercel.";
+      }
+
+      if (errorMsg.includes("not found") || errorMsg.includes("model")) {
+        // Fallback to gemini-3-flash-preview if 2.0 is not yet available in the selected project region
+        try {
+          const fallbackResponse = await ai.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: [
+              ...chatHistory.map(m => ({
+                role: m.role,
+                parts: [{ text: m.text }]
+              })),
+              { role: 'user', parts: [{ text: message }] }
+            ],
+            config: { systemInstruction: SYSTEM_INSTRUCTION }
+          });
+          return fallbackResponse.text || "I've switched to an alternate neural frequency. How can I assist you today?";
+        } catch (innerError) {
+          return "I'm having trouble establishing a connection to the Gemini neural network. Please verify your API key and project status in Google AI Studio.";
+        }
       }
       
       return "Oof, it looks like a solar flare just hit our communication array! Don't worry, even the best tech has its moments. Try sending that again, I'm all ears!";
