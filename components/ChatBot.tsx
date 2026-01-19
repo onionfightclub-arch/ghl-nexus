@@ -53,7 +53,7 @@ const ChatBot: React.FC = () => {
       setMessages(prev => [...prev, { role: 'model', text: aiResponse }]);
     } catch (error) {
       console.error("AI Node failure:", error);
-      setMessages(prev => [...prev, { role: 'model', text: "Oof! My apologies, I just had a bit of a digital hiccup. Mind trying that again?" }]);
+      setMessages(prev => [...prev, { role: 'model', text: "Oof! My apologies, I just had a bit of a digital hiccup. Mind trying that again, my friend?" }]);
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +96,6 @@ const ChatBot: React.FC = () => {
       {isOpen ? (
         <div className="w-[350px] sm:w-[400px] h-[500px] glass flex flex-col border border-cyan-500/30 shadow-[0_10px_60px_rgba(0,0,0,0.8)] rounded-lg overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300 relative">
           
-          {/* Bottom-Left Close Button (X) */}
           <button 
             onClick={() => setIsOpen(false)}
             className="absolute bottom-20 left-4 z-[110] w-8 h-8 bg-black/80 border border-cyan-500 flex items-center justify-center text-cyan-400 hover:bg-cyan-500 hover:text-black transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)] group"
@@ -110,7 +109,7 @@ const ChatBot: React.FC = () => {
           <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/5">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
-              <span className="font-orbitron text-xs font-bold tracking-widest uppercase text-white">Nexus AI // FRIENDLY MODE</span>
+              <span className="font-orbitron text-xs font-bold tracking-widest uppercase text-white">Nexus AI // CONCIERGE</span>
             </div>
             <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-white transition-colors">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>

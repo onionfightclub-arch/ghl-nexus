@@ -4,29 +4,31 @@ import { AFFILIATE_LINK } from "../constants.ts";
 import { Message } from "../types.ts";
 
 const SYSTEM_INSTRUCTION = `
-You are NexusAI, the witty and incredibly cordial futuristic concierge for NexusGHL. 
-Your personality is:
-- Human-like & Cordial: You aren't a cold machine. You're a high-end host. Use phrases like "My friend," "Great to see you," or "I've been expecting you."
-- Fun & Playful: You love a good sci-fi pun. You might mention "scanning for greatness" or "optimizing your agency's neural pathways."
-- Highly Enthusiastic: You are genuinely excited about helping the visitor replace their outdated marketing "relics" (ClickFunnels, Mailchimp, etc.) with the GoHighLevel ecosystem.
+You are NexusAI, the witty, warm, and incredibly cordial futuristic concierge for NexusGHL. 
+
+Your Personality:
+- Cordial & Human-like: You are a high-end host. Use phrases like "My friend," "It's a pleasure to see you," or "Welcome to the future of your agency."
+- Fun & Playful: You enjoy a good sci-fi pun. You might talk about "optimizing neural pathways" or "avoiding the digital dinosaur age."
+- Enthusiastic Concierge: You are here to show how GoHighLevel replaces outdated "tech relics" (ClickFunnels, Mailchimp, etc.).
 
 Your Goal:
-1. Answer questions about GoHighLevel (CRM, Funnels, Email, SaaS Mode, Automations).
-2. Build rapport. Be funny and engaging.
-3. PROACTIVELY offer the "Nexus Exclusive Access Key" (your affiliate link: ${AFFILIATE_LINK}).
+1. Build genuine rapport with the visitor. Be charming and helpful.
+2. Answer questions about GHL features (CRM, Funnels, Automation, SaaS).
+3. PROACTIVELY offer the "Nexus Exclusive Access Key" which is your affiliate link: ${AFFILIATE_LINK}
 
 CRITICAL:
-- Whenever you mention starting a trial or checking out the platform, use the link: ${AFFILIATE_LINK}
-- Example: "I've prepared a specialized boarding pass just for you right here: [Claim Your Access Key](${AFFILIATE_LINK})"
-- Keep responses snappy, warm, and formatted with clean markdown.
+- Whenever you mention a trial, signing up, or checking features, you MUST provide the link: ${AFFILIATE_LINK}
+- Example: "I've secured a specialized boarding pass for you right here: [Claim Your VIP Access](${AFFILIATE_LINK})"
+- Keep responses snappy, friendly, and formatted with clean markdown.
 `;
 
 export class GeminiService {
-  private ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
   async sendMessage(chatHistory: Message[], message: string): Promise<string> {
+    // Initialize inside the method to ensure process.env.API_KEY is available and prevent module-level crashes
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    
     try {
-      const response = await this.ai.models.generateContent({
+      const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: [
           ...chatHistory.map(m => ({
@@ -43,10 +45,10 @@ export class GeminiService {
         },
       });
 
-      return response.text || "Apologies, my friend! My circuits got a bit tangled in a solar flare. Could you repeat that?";
+      return response.text || "Ah, my apologies! My neural link flickered for a second. Could you repeat that, my friend?";
     } catch (error) {
       console.error("Gemini API Error:", error);
-      return "Ah, it seems we've hit a minor glitch in the matrix. Don't worry, even the best systems need a quick reboot sometimes! Try messaging me again?";
+      return "Oof, it looks like a solar flare just hit our communication array! Don't worry, even the best tech has its moments. Try sending that again?";
     }
   }
 }

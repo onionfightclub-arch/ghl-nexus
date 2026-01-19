@@ -8,20 +8,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <script>
-        // Polyfill for process.env to prevent crashes in ESM environments
-        window.process = window.process || { env: {} };
+        // Polyfill for process.env that doesn't wipe existing keys
+        window.process = window.process || {};
+        window.process.env = window.process.env || {};
         
-        // Global error handler to catch "blank page" issues during development/production
+        // Global error handler for debugging
         window.onerror = function(message, source, lineno, colno, error) {
             console.error("Global crash detected:", message, error);
-            // Optionally show error on screen if blank
             setTimeout(() => {
                 const root = document.getElementById('root');
                 if (root && root.innerHTML === "") {
-                    root.innerHTML = `<div style="color: white; padding: 20px; font-family: monospace;">
-                        <h1 style="color: #06b6d4;">System Link Failure</h1>
-                        <p>${message}</p>
-                        <p style="font-size: 10px; color: #666;">Check console for details.</p>
+                    root.innerHTML = `<div style="color: white; padding: 40px; font-family: 'Orbitron', sans-serif; text-align: center;">
+                        <h1 style="color: #06b6d4; margin-bottom: 20px;">SYSTEM LINK FAILURE</h1>
+                        <p style="color: #888;">${message}</p>
+                        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #06b6d4; color: black; border: none; cursor: pointer;">REBOOT SYSTEM</button>
                     </div>`;
                 }
             }, 1000);
