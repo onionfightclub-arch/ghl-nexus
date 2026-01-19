@@ -1,14 +1,14 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Message } from '../types.ts';
-import { localBotService } from '../services/localBotService.ts';
+import { geminiService } from '../services/geminiService.ts';
 import { AFFILIATE_LINK } from '../constants.ts';
 
 const ChatBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', text: 'Greeting initiated. I am NexusAI. How can I optimize your agency workflow today?' }
+    { role: 'model', text: "Hello there! I'm NexusAI. I've been scanning the horizon for a visionary like you. Ready to teleport your agency into the future? I've even got a special 14-day 'VIP Pass' waiting for you whenever you're ready to dive in!" }
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -40,18 +40,23 @@ const ChatBot: React.FC = () => {
     userSendAudio.current?.play().catch(() => {});
 
     const userMsg: Message = { role: 'user', text: input };
+    const currentHistory = [...messages];
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setIsLoading(true);
 
     aiTypingAudio.current?.play().catch(() => {});
 
-    const aiResponse = await localBotService.sendMessage(input);
-    
-    aiReplyAudio.current?.play().catch(() => {});
-
-    setMessages(prev => [...prev, { role: 'model', text: aiResponse }]);
-    setIsLoading(false);
+    try {
+      const aiResponse = await geminiService.sendMessage(currentHistory, input);
+      aiReplyAudio.current?.play().catch(() => {});
+      setMessages(prev => [...prev, { role: 'model', text: aiResponse }]);
+    } catch (error) {
+      console.error("AI Node failure:", error);
+      setMessages(prev => [...prev, { role: 'model', text: "Oof! My apologies, I just had a bit of a digital hiccup. Mind trying that again?" }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formatMessageText = (text: string) => {
@@ -82,7 +87,8 @@ const ChatBot: React.FC = () => {
       parts.push(text.substring(lastIndex));
     }
 
-    return parts.length > 0 ? parts : text;
+    if (parts.length === 0) return text;
+    return parts;
   };
 
   return (
@@ -104,7 +110,7 @@ const ChatBot: React.FC = () => {
           <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/5">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
-              <span className="font-orbitron text-xs font-bold tracking-widest uppercase text-white">Nexus AI // LOCAL</span>
+              <span className="font-orbitron text-xs font-bold tracking-widest uppercase text-white">Nexus AI // FRIENDLY MODE</span>
             </div>
             <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-white transition-colors">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -119,7 +125,7 @@ const ChatBot: React.FC = () => {
                   ? 'bg-cyan-500 text-black font-semibold ml-auto rounded-tr-none' 
                   : 'bg-white/10 text-gray-200 border border-white/5 rounded-tl-none whitespace-pre-wrap'
                 }`}>
-                  {msg.role === 'model' ? formatMessageText(msg.text) : msg.text}
+                  {msg.role === 'model' ? formatMessageText(msg.text as string) : msg.text}
                 </div>
               </div>
             ))}
@@ -140,7 +146,7 @@ const ChatBot: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Query system logic..."
+                placeholder="Say hello to Nexus..."
                 className="flex-1 bg-black/50 border border-white/10 rounded-sm px-3 py-2 text-xs focus:outline-none focus:border-cyan-500 text-white"
               />
               <button 
