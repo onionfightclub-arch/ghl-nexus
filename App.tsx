@@ -55,6 +55,8 @@ const App: React.FC = () => {
         </section>
       </main>
 
+      <ChatBot />
+
       <footer className="py-12 border-t border-white/5 text-center text-gray-500 text-xs font-orbitron tracking-widest">
         <p>&copy; 2024 NEXUSGHL ECOSYSTEM. ALL SYSTEMS NOMINAL.</p>
         <div className="mt-4 flex justify-center gap-6">
@@ -63,9 +65,6 @@ const App: React.FC = () => {
           <a href="#" className="hover:text-cyan-400">AFFILIATE_LOGS</a>
         </div>
       </footer>
-
-      {/* Futuristic Chatbot component */}
-      <ChatBot />
     </div>
   );
 };

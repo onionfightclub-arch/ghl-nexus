@@ -10,6 +10,22 @@
     <script>
         // Polyfill for process.env to prevent crashes in ESM environments
         window.process = window.process || { env: {} };
+        
+        // Global error handler to catch "blank page" issues during development/production
+        window.onerror = function(message, source, lineno, colno, error) {
+            console.error("Global crash detected:", message, error);
+            // Optionally show error on screen if blank
+            setTimeout(() => {
+                const root = document.getElementById('root');
+                if (root && root.innerHTML === "") {
+                    root.innerHTML = `<div style="color: white; padding: 20px; font-family: monospace;">
+                        <h1 style="color: #06b6d4;">System Link Failure</h1>
+                        <p>${message}</p>
+                        <p style="font-size: 10px; color: #666;">Check console for details.</p>
+                    </div>`;
+                }
+            }, 1000);
+        };
     </script>
     <style>
         body {

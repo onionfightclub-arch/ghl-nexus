@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AFFILIATE_LINK } from '../constants';
+import { AFFILIATE_LINK } from '../constants.ts';
 
 const Hero: React.FC = () => {
   return (

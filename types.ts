@@ -1,9 +1,4 @@
 
-export interface Message {
-  role: 'user' | 'model';
-  text: string;
-}
-
 export interface Feature {
   title: string;
   description: string;
@@ -15,4 +10,10 @@ export interface Plan {
   price: string;
   features: string[];
   recommended?: boolean;
+}
+
+// Added Message interface for chat interactions between the user and the model
+export interface Message {
+  role: 'user' | 'model';
+  text: string;
 }
