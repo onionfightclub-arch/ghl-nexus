@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Message } from '../types.ts';
-import { geminiService } from '../services/geminiService.ts';
+import { localBotService } from '../services/localBotService.ts';
 import { AFFILIATE_LINK } from '../constants.ts';
 
 const ChatBot: React.FC = () => {
@@ -40,15 +40,16 @@ const ChatBot: React.FC = () => {
     userSendAudio.current?.play().catch(() => {});
 
     const userMsg: Message = { role: 'user', text: input };
-    const currentHistory = [...messages];
     setMessages(prev => [...prev, userMsg]);
+    const currentInput = input;
     setInput('');
     setIsLoading(true);
 
     aiTypingAudio.current?.play().catch(() => {});
 
     try {
-      const aiResponse = await geminiService.sendMessage(currentHistory, input);
+      // Use the local service instead of the external Gemini API
+      const aiResponse = await localBotService.sendMessage(currentInput);
       aiReplyAudio.current?.play().catch(() => {});
       setMessages(prev => [...prev, { role: 'model', text: aiResponse }]);
     } catch (error) {
